@@ -58,7 +58,6 @@ Lazy(logfile.stdout)
                 return {
                     datetime: recDate,
                     method: httpMethod,
-                    http: '1.1',
                     uri: httpRec
                 };
             }
