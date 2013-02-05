@@ -17,6 +17,11 @@ parser.addArgument(['--speedup'], {help:'Speed up factor. Default: 1', defaultVa
 parser.addArgument(['--method'], {help:'HTTP method to use. Default: HEAD', defaultValue:'HEAD', choices:possibleMethods});
 var args = parser.parseArgs();
 
+if (args.speedup < 1) {
+    console.log("Speed factor has to be greater or equal 1!");
+    process.exit(1);
+}
+
 // Require the necessary module
 var http = args.port == '443' ? require('https') : require('http');
 var Lazy = require('lazy');
@@ -117,6 +122,7 @@ Lazy(logfile.stdout)
                         function(resp) {
                             var diff = (new Date().getTime()) - timings[reqNum];
                             console.log(' - #' + reqNum + ' [DT=' + diff + 'ms, R=' + resp.statusCode + ']');
+                            delete timings[reqNum];
                         }
                     );
                     req.on('socket', function() {
