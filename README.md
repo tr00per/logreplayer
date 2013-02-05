@@ -12,9 +12,9 @@ It was forked to __logreplayer__, to replay simplified logs, which are stripped 
 
 ## Simplified logs?
 
-Just the date, taken directly from Apache logs, separated by a pipe "|", followed by Path+Query.
+Just the date, taken directly from Apache logs, separated by a pipe "|", followed by Path with Query.
 
-It required some preprocessing, but logs are much smaller, which make difference, when Apache logs are measured in GB.
+It requires some preprocessing, but logs are approx 40% smaller, which makes difference, when Apache logs are measured in GB.
 
 ## How?
 
