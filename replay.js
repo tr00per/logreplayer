@@ -69,21 +69,21 @@ Lazy(logfile.stdout)
         console.log('Determining execution order and offset...');
 
         // Compile a requestSet array which holds the requests in the correct order
-        var requestSet = new Array();
+        var requestSet = [];
         f.forEach(function(item) {
             // Calculate # of seconds past start we should fire request
             var offset = Math.round(((item.datetime - dtStart) / 1000) / args.speedup);
             if (offset > dtDuration) dtDuration = offset;
 
             if ( typeof requestSet[offset] == 'undefined' ) {
-                requestSet[offset] = new Array();
+                requestSet[offset] = [];
             }
             requestSet[offset].push(item);
         });
 
         console.log("Executing...\n\n");
 
-        var timings = new Array();
+        var timings = [];
         var reqSeq = 0;
 
         // RUN ZE TEST!
@@ -104,7 +104,7 @@ Lazy(logfile.stdout)
                 console.log('['+new Date(dtStart + runOffsetMS)+'] '+requestSet[runOffset].length+' Requests' );
 
                 // FIRE ZE MISSILES!!...er, requests, I mean
-                requestSet[runOffset].forEach(function(item){
+                requestSet[runOffset].forEach(function(item) {
                     var reqNum = reqSeq++;
                     var req = http.request({
                             host: args.host,
@@ -113,13 +113,17 @@ Lazy(logfile.stdout)
                             method: item.method,
                             reqStart: new Date().getTime()
                         }, 
-                        function(resp) {}
-                    )
-                    .on('socket', function() { timings[reqNum] = new Date().getTime(); })
-                    .on('response', function(resp) {
-                        var diff = (new Date().getTime()) - timings[reqNum];
-                        console.log(' - #' + reqNum + ' [DT=' + diff + 'ms, R=' + resp.statusCode + ']'); }
+                        function(resp) {
+                            var diff = (new Date().getTime()) - timings[reqNum];
+                            console.log(' - #' + reqNum + ' [DT=' + diff + 'ms, R=' + resp.statusCode + ']');
+                        }
                     );
+                    req.on('socket', function() {
+                        timings[reqNum] = new Date().getTime();
+                    });
+                    req.on('error', function(err) {
+                        console.log(' - #' + reqNum + ' Error:', err.syscall, '-', err.errno);
+                    });
                     req.end();
                 });
 
