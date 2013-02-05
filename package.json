@@ -1,9 +1,6 @@
 {
     "name" : "logreplayer",
     "version" : "1.0.0-snapshot",
-    "scripts": {
-        "start": "node replay.js"
-    },
     "description" : "Log replayer for simplified logs",
     "homepage" : "https://github.com/tr00per/logreplayer",
     "main" : "replay",
@@ -13,6 +10,6 @@
     },
     "dependencies" : {
         "lazy" : "~1.0.8",
-        "konphyg" : "~1.2.0"
+        "argparse" : "~0.1.10"
     }
 }

@@ -1,6 +1,7 @@
 # logreplayer #
 
 Previously: nodejs-logreplayer
+
 Original author: adamlundrigan
 
 ## What?
@@ -30,19 +31,14 @@ Easy:
 3. Run
        ```npm install``` 
 
-4. Copy the provided configuration file `config/example.json.dist` to `config/<something>.json` and edit
- * `source`: Full path to the access log you want to replay
- * `speedupFactor`: Speed at which log is replayed (ie: 2 = twice normal speed) 
- * `target`: Specifies the target of the load testing
-     * `host`: hostname of target machine
-     * `port`: target port (for SSL, only 443 is supported)
+4. Read help
 
-4. Run the profile you created (the `<something>` you chose in #3)
+       ```./replay.js --help```
 
-       ```node replay.js <something>```
+5. Run!
+
+       ```./replay.js <something>```
 
 ## Disclaimer
 
 This code is provided AS-IS, with no warranty (explicit or implied) and has not been vetted or tested for deployment in a production environment. Use of this code at your own risk.
-
-Released under Public Domain. Associated libraries carry their own individual licenses where applicable.

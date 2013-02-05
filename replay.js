@@ -1,38 +1,31 @@
+#!/usr/bin/env node
+'use strict';
 
-// Check for command line argument specifying config profile
-if ( typeof process.argv[2] == 'undefined' ) {
-    console.log("Usage: node replay.js <config-key>");
-    process.exit(1);
-}
+var possibleMethods = ['HEAD', 'GET', 'POST'];
 
-// Load the specified configuration profile
-try {
-    var konphyg = require('konphyg')(__dirname + '/config');
-    var config = konphyg(process.argv[2]);
+var ArgumentParser = require('argparse').ArgumentParser;
+var parser = new ArgumentParser({description: 'Log replayer'});
+parser.addArgument(['--source'], {help:'Path to input file. Gzipped file can be used.', required:true});
+parser.addArgument(['--host'], {help:'Target host', required:true});
+parser.addArgument(['--port'], {help:'Port number. Default: 80', defaultValue:80, type:"int"});
+parser.addArgument(['--speedup'], {help:'Speed up factor. Default: 1', defaultValue:1, type:"int"});
+parser.addArgument(['--method'], {help:'HTTP method to use. Default: HEAD', defaultValue:'HEAD', choices:possibleMethods});
+var args = parser.parseArgs();
 
-    if (!config.source) throw "Invalid config file: missing 'source'";
-    if (!config.speedupFactor) throw "Invalid config file: missing 'speedupFactor'";
-    if (!config.target) throw "Invalid config file: missing 'target'";
-    else {
-      if (!config.target.host) throw "Invalid config file: missing 'target.host'";
-      if (!config.target.port) throw "Invalid config file: missing 'target.port'";
-    }
-
-} catch (e) {
-    console.log(e + "\n");
-    console.log("Usage: node replay.js <config-key>");
-    process.exit(1);
-}
-
-// Require the necessary modules
-var http = config.target.port == '443' ? require('https') : require('http');
+// Require the necessary module
+var http = args.port == '443' ? require('https') : require('http');
 var Lazy = require('lazy');
 var spawn = require('child_process').spawn;
-var logfile = spawn('cat', [config.source]);
+var feeder = 'cat';
+if (args.source.substr(-3, 3) == '.gz') {
+    feeder = 'zcat';
+}
+var logfile = spawn(feeder, [args.source]);
 
 // Set up some variables
-var regexLogLine = /^[0-9a-f.:]+ - - \[([0-9]{2}\/[a-z]{3}\/[0-9]{4}):([0-9]{2}:[0-9]{2}:[0-9]{2}[^\]]*)\] \"([^\"]+)\" [0-9]+ [0-9]+/i;
-var regexHttpRequest = /^(GET|POST) (.+) HTTP\/(1.[0-1])$/i;
+var httpMethod = args.method.toUpperCase();
+// Regex: (date):(time)\|(path?query)
+var regexLogLine = /^([0-9]{2}\/[a-z]{3}\/[0-9]{4}):([0-9]{2}:[0-9]{2}:[0-9]{2}[^\|]*)\|([^\"]+)$/i;
 var dtStart = Date.now();
 var dtDuration = 0;
 
@@ -45,6 +38,7 @@ Lazy(logfile.stdout)
     .map(function (line) {
         // Chop the line
         var parts = regexLogLine.exec(line);
+
         if ( parts != null ) { 
             var recDate = Date.parse(new Date(parts[1]+' '+parts[2]));
 
@@ -54,13 +48,13 @@ Lazy(logfile.stdout)
             }
 
             // Process the HTTP request portion
-            var httpRec = regexHttpRequest.exec(parts[3]);
+            var httpRec = parts[3];
             if ( httpRec != null ) {
                 return {
                     datetime: recDate,
-                    method: httpRec[1],
-                    http: httpRec[3],
-                    uri: httpRec[2]
+                    method: httpMethod,
+                    http: '1.1',
+                    uri: httpRec
                 };
             }
         } 
@@ -74,7 +68,7 @@ Lazy(logfile.stdout)
         var requestSet = new Array();
         f.forEach(function(item) {
             // Calculate # of seconds past start we should fire request
-            var offset = Math.round(((item.datetime - dtStart) / 1000) / config.speedupFactor);
+            var offset = Math.round(((item.datetime - dtStart) / 1000) / args.speedup);
             if (offset > dtDuration) dtDuration = offset;
 
             if ( typeof requestSet[offset] == 'undefined' ) {
@@ -87,7 +81,6 @@ Lazy(logfile.stdout)
 
         var timings = new Array();
         var reqSeq = 0;
-
 
         // RUN ZE TEST!
         var execStart = Date.now();
@@ -110,8 +103,8 @@ Lazy(logfile.stdout)
                 requestSet[runOffset].forEach(function(item){
                     var reqNum = reqSeq++;
                     var req = http.request({
-                            host: config.target.host,
-                            port: config.target.port,
+                            host: args.host,
+                            port: args.port,
                             path: item.uri,
                             method: item.method,
                             reqStart: new Date().getTime()
