@@ -37,7 +37,7 @@ Easy:
 
 ## Copyrights
 
-nodejs-logreplay: adamlundrigan
-logreplayer: tr00per
+* nodejs-logreplay: adamlundrigan
+* logreplayer: tr00per
 
-Use this under The BSD 2-Clause License http://opensource.org/licenses/BSD-2-Clause
+Use this script under The BSD 2-Clause License http://opensource.org/licenses/BSD-2-Clause

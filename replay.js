@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+/* Logreplayer
+ * Use this script under The BSD 2-Clause
+ * Copyright (c) 2012 by adamlundrigan
+ * Copyright (c) 2013 by tr00per
+ */
 'use strict';
 
 var possibleMethods = ['HEAD', 'GET', 'POST'];
