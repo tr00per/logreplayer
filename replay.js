@@ -31,6 +31,7 @@ if (args.source.substr(-3, 3) == '.gz') {
     feeder = 'zcat';
 }
 var logfile = spawn(feeder, [args.source]);
+logfile.stdout.setEncoding('utf-8');
 
 // Set up some variables
 var httpMethod = args.method.toUpperCase();
@@ -44,7 +45,6 @@ console.log('Loading access log...');
 // Initiate ze process!
 Lazy(logfile.stdout)
     .lines
-    .map(String)
     .map(function (line) {
         // Chop the line
         var parts = regexLogLine.exec(line);
