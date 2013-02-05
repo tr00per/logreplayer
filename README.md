@@ -1,9 +1,5 @@
 # logreplayer #
 
-Previously: nodejs-logreplayer
-
-Original author: adamlundrigan
-
 ## What?
 
 __logreplayer__ is a (very) simple Node.js application which replayes simplified logs, in real time, against a target server.
@@ -39,6 +35,9 @@ Easy:
 
        ```./replay.js <something>```
 
-## Disclaimer
+## Copyrights
 
-This code is provided AS-IS, with no warranty (explicit or implied) and has not been vetted or tested for deployment in a production environment. Use of this code at your own risk.
+nodejs-logreplay: adamlundrigan
+logreplayer: tr00per
+
+Use this under The BSD 2-Clause License http://opensource.org/licenses/BSD-2-Clause
