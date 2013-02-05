@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-/* Logreplayer
- * Use this script under The BSD 2-Clause
+/*
+ * Logreplayer Use this script under The BSD 2-Clause
  * Copyright (c) 2012 by adamlundrigan
  * Copyright (c) 2013 by tr00per
  */
@@ -36,7 +36,7 @@ var dtDuration = 0;
 
 console.log('Loading access log...');
 
-// Initiate ze process! 
+// Initiate ze process!
 Lazy(logfile.stdout)
     .lines
     .map(String)
@@ -68,7 +68,8 @@ Lazy(logfile.stdout)
     }).join(function(f) {
         console.log('Determining execution order and offset...');
 
-        // Compile a requestSet array which holds the requests in the correct order
+        // Compile a requestSet array which holds the requests in the correct
+        // order
         var requestSet = [];
         f.forEach(function(item) {
             // Calculate # of seconds past start we should fire request
@@ -94,7 +95,7 @@ Lazy(logfile.stdout)
             var runOffsetMS = (Date.now() - execStart);
             var runOffset = Math.round(runOffsetMS / 1000);
 
-            // Is the test over yet?  How about now? now?
+            // Is the test over yet? How about now? now?
             if ( runOffset > dtDuration ) {
                 clearInterval(interval);
             }
