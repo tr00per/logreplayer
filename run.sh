@@ -17,7 +17,7 @@ echo -e "[default]\naccess_key = $ACCESS\nsecret_key = $SECRET" > ~/s3cmd.conf
 
 # Download input file
 INPUT_DATA=$(basename $INPUT_FILE)
-s3cmd -c s3cmd.conf --force get "s3://$BUCKET/input/$INPUT_FILE" ~/$INPUT_DATA
+s3cmd -c ~/s3cmd.conf --force get "s3://$BUCKET/input/$INPUT_FILE" ~/$INPUT_DATA
 
 # Replay each split file
 NOW=$(date +%s)
@@ -25,4 +25,4 @@ LOGFILE="replayer-$NOW.log"
 ./replay.js --source ~/$INPUT_DATA --host "$HOST" > ~/$LOGFILE
 
 # Upload output to S3
-s3cmd -c s3cmd.conf put ~/$LOGFILE "s3://$BUCKET/output/$INSTANCE_ID/"
+s3cmd -c ~/s3cmd.conf put ~/$LOGFILE "s3://$BUCKET/output/$INSTANCE_ID/"

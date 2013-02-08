@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /*
- * Logreplayer Use this script under The BSD 2-Clause
+ * Logreplayer
+ * 
+ * Use this script under The BSD 2-Clause
  * Copyright (c) 2012 by adamlundrigan
  * Copyright (c) 2013 by tr00per
  */
@@ -98,7 +100,7 @@ Lazy(logfile.stdout)
 
             // Determine how much time has passed
             var runOffsetMS = (Date.now() - execStart);
-            var runOffset = Math.round(runOffsetMS / 1000);
+            var runOffset = Math.floor(runOffsetMS / 1000);
 
             // Is the test over yet? How about now? now?
             if ( runOffset > dtDuration ) {
